@@ -1,7 +1,8 @@
 const Event = require('../models/eventmodel');
 
-exports. createEvent = async(req,res) => {
+exports.createEvent = async(req,res) => {
     try{
+
         const { title, date, time, location,description} = req.body;
 
         const event = new Event({title, date, time, location,description})
@@ -39,6 +40,7 @@ exports.getAllEvents = async(req,res)=>{
 exports.updateEventById = async(req,res) => {
     try{
         const {id} = req.params;
+
         const { title, date, time, location,description} = req.body;
         
         const eventer = await Event.findByIdAndUpdate(id,{title, date, time, location,description})
@@ -61,8 +63,8 @@ exports.softDeleteEventById = async(req,res) => {
 
         const soft = await Event.findByIdAndUpdate(id)
         
-        isDeleted = true;
-        await soft.save()
+        soft.isDeleted = true;
+        soft.save()
 
         res.status(201).json({
             success:true,

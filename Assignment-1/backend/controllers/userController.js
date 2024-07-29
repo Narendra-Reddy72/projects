@@ -1,57 +1,60 @@
 const User = require('../models/usermodel');
-const jwt = require('jsonwebtoken')
-const key = 'protect'
+const jwt = require('jsonwebtoken');
+const {SECRET_KEY} = require('../env/env');
  
-const generateToken = async(id,role)=>{
-    return jwt.sign({id:id,role:role},key,{expiresIN:'24h'})
-}
-exports. createUser = async(req,res) => {
-    try{
-        const { name,email,role,password } = req.body;
+const generateToken = (id,role)=>{
 
-        const user = new User({name,email,role,password})
+    return jwt.sign({id:id,role:role}, SECRET_KEY, {expiresIn:'24h'})
+}
+exports.createUser = async (req, res) => {
+    try {
+        const { name, email, role, password } = req.body;
+        const user = new User({ name, email, role, password });
 
         await user.save();
-         generateToken = await User.find(user._id,user.role)
+        const token = generateToken(user._id, user.role);
+
         res.status(201).json({
-            success:true,
-            data:user,
-        })
-    }catch(err){
+            success: true,
+            token: token,
+            data: user,
+        });
+    } catch (err) {
         res.status(500).json({
-            success:false,
-            message:err.msg
-        })
+            success: false,
+            message: err.message,
+        });
     }
-}
+};
 
-exports.loginUser = async(req,res) =>{
-    try{
-        const { email,password } = req.body;
 
-        const user = new User.findOne({email})
+exports.loginUser = async (req, res) => {
+    try {
+        const {  email, password } = req.body;
+        
+        const user = await User.findOne ({ email});
 
-        if(user && (await User.matchPassword(password))){
-            return next();
-        }
-        generateToken = await User.find(user._id,user.role)
-        res.status(201).json({
-            success:true,
-            data:user
-        })
-    }catch(err){
+        if(user && (await user.matchPassword(password))){
+            const token = generateToken(user._id, user.role);
+            res.status(201).json({
+                success: true,
+                token: token,
+                data: user,
+            });
+        }  
+    } catch (err) {
         res.status(500).json({
-            success:false,
-            message:err.msg
-        })
+            success: false,
+            message: err.message,
+        });
     }
-}
+};
 
 
 exports.getAllUsers = async(req,res)=>{
 
     try{
-        const users = await Event.find({})
+        const users = await User.find({})
         res.status(201).json({
             success:true,
             data:users
@@ -67,13 +70,14 @@ exports.getAllUsers = async(req,res)=>{
 exports.updateUserById = async(req,res) => {
     try{
         const {id} = req.params;
+        
         const { name,email,role,password } = req.body;
         
-        const eventer = await Event.findByIdAndUpdate(id,{name,email,role,password})
+        const users = await User.findByIdAndUpdate(id,{name,email,role,password})
 
         res.status(201).json({
             success:true,
-            data:eventer
+            data:users
         })
     }catch(err){
         res.status(500).json({
@@ -83,14 +87,14 @@ exports.updateUserById = async(req,res) => {
     }
 }
 
-exports.softDeleteEventById = async(req,res) => {
+exports.softDeleteUserById = async(req,res) => {
     try{
         const {id} = req.params;
 
-        const soft = await User.findByIdAndUpdate(id)
-        
-        isDeleted = true;
-        await soft.save()
+        const soft = await User.findById(id)
+
+        soft.isDeleted = true;
+        soft.save();
 
         res.status(201).json({
             success:true,

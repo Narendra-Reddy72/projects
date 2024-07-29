@@ -1,32 +1,18 @@
 const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema({
-    title: {
-        type:String,
-        required:true
-    },
 
-    date: {
-        type:Date,
-        required:true
-    },
+    title: { type:String,required:true},
 
-    time: {
-        type: Time,
-    },
+    date: {type:Date,required:true},
+    
+    time: {type:String},
+    
+    location:{type:String},
 
-    location:{
-        type:String,
-    },
+    description: {type:String},
 
-    description: {
-        type:String
-    },
-
-    isDeleted: {
-        type:Boolean,
-        default:false
-    }
+    isDeleted: {type:Boolean,default:false}
     
 
 })
