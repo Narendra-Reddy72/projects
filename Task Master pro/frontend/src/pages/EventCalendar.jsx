@@ -10,7 +10,7 @@ const EventCalendar = () => {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:4580/api/readEvent')
+    axios.get('http://localhost:4580/api/getAllEvents')
       .then(response => {
         const events = response.data.data.map(event => ({
           id: event._id,

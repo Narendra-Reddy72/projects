@@ -29,12 +29,12 @@ exports.createUser = async (req, res) => {
 
 
 exports.loginUser = async (req, res) => {
+    const {  email, password } = req.body;
+    console.log(email,password)
     try {
-        const {  email, password } = req.body;
-        
         const user = await User.findOne ({ email});
-
         if(user && (await user.matchPassword(password))){
+        console.log(user,password)
             const token = generateToken(user._id, user.role);
             res.status(201).json({
                 success: true,
@@ -73,7 +73,7 @@ exports.updateUserById = async(req,res) => {
         
         const { name,email,role,password } = req.body;
         
-        const users = await User.findByIdAndUpdate(id,{name,email,role,password})
+        const users = await User.findByIdAndUpdate(id,{name,email,role,password},{new:true})
 
         res.status(201).json({
             success:true,

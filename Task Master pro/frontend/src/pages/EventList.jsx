@@ -7,7 +7,7 @@ function EventList() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:4580/api/readEvent')
+    axios.get('http://localhost:4580/api/getAllEvents')
       .then(response => {
         setEvents(response.data.data);
       })
@@ -16,7 +16,19 @@ function EventList() {
       });
   }, []);
 
+    
+  const deleteEventById = async(id) => {
+     await axios.delete(`http://localhost:4580/api/deleteEvent/${id}`)
+      .then(response => {
+        setEvents(events.filter(event => event._id !== id));
+        console.log(response.data)
+      })
+      .catch(error => {
+        console.error('Error deleting event:', error);
+      });
+  };
 
+  
   return (
     <div id={styles.profile}>
       <h1>List of All Events</h1>
@@ -35,13 +47,15 @@ function EventList() {
           {events.map(event => (
             <tr key={event._id}>
               <td>{event.title}</td>
-              <td>{event.date}</td>
+              <td>{new Date(event.date).toLocaleDateString()}</td>
               <td>{event.time}</td>
               <td>{event.location}</td>
               <td>{event.description}</td>
               <td>
                 <Link to={`/editEvent/${event._id}`}><button>Edit</button></Link>
               </td>
+              
+                <td><button onClick={()=>deleteEventById(event._id)}>Delete</button></td>
             </tr>
           ))}
         </tbody>

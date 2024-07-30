@@ -12,7 +12,7 @@ function UserLoginForm() {
     try {
       const response = await axios.post('http://localhost:4580/api/login', payload);
       localStorage.setItem('token', response.data.token);
-      console.log(response.data.token);
+      console.log(response.data);
     } catch (error) {
       console.error('Error logging in:', error);
     }

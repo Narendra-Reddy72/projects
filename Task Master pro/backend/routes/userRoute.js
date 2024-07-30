@@ -10,7 +10,8 @@ const {secure,access} = require('../middleware/auth')
 router.post('/create',Users.createUser);
 router.get('/read',Users.getAllUsers);
 router.put('/update/:id',secure,access('user'),Users.updateUserById);
-router.put('/delete/:id',Users.softDeleteUserById);
+router.delete('/delete/:id',Users.softDeleteUserById);
 router.post('/login',Users.loginUser);
+
 
 module.exports = router;
